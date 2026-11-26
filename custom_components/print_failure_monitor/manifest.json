@@ -1,0 +1,21 @@
+{
+  "domain": "print_failure_monitor",
+  "name": "Print Failure Monitor",
+  "codeowners": [
+    "@somus"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "camera",
+    "frontend",
+    "http",
+    "panel_custom",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/somus/ha-print-failure-monitor",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/somus/ha-print-failure-monitor/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

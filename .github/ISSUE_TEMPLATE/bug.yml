@@ -1,0 +1,53 @@
+name: Bug report
+description: Report a problem with Print Failure Monitor
+title: "fix: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please don't include API keys, access tokens, or camera frames you don't want public.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened?
+      description: Describe what you saw and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: The shortest steps that show the problem, and roughly when it happened.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Integration version
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+    validations:
+      required: true
+  - type: input
+    id: printer
+    attributes:
+      label: Printer and printer integration
+      description: For example, Bambu Lab P1S with ha-bambulab, or Voron with Moonraker.
+  - type: input
+    id: provider
+    attributes:
+      label: Provider and model
+      description: For example, OpenRouter with google/gemini-decision-1.
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics and logs
+      description: >
+        Attach the diagnostics from the printer's menu under Settings > Devices & services, and any
+        log lines from custom_components.print_failure_monitor. Diagnostics leave out the API key and images.

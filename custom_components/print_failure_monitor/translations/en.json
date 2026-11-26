@@ -1,0 +1,278 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Decision model",
+        "description": "Each check sends one camera frame to the provider's decision model and asks whether the print has failed.",
+        "data": {
+          "name": "Name",
+          "provider": "Provider",
+          "api_key": "API key",
+          "model": "Model"
+        },
+        "data_description": {
+          "name": "Used for the device and entity names, e.g. the printer's name.",
+          "provider": "OpenRouter reaches about 30 decision models with one key. Google's free tier serves gemini-decision-1, but Google uses free-tier inputs, your camera frames, to improve its products. The OpenAI format also works with gateways such as Vercel AI Gateway via the base URL option.",
+          "model": "Leave empty for the provider's default: google/gemini-decision-1 on OpenRouter, gemini-decision-1 on Google, gpt-6-luna on OpenAI."
+        }
+      },
+      "printer": {
+        "title": "Printer",
+        "description": "Pick the printer's entities from its own integration (ha-bambulab, Moonraker, OctoPrint, PrusaLink, ...).",
+        "data": {
+          "camera": "Camera",
+          "print_status": "Print status",
+          "active_states": "States that mean a print is running",
+          "pause_button": "Pause button",
+          "resume_button": "Resume button",
+          "stop_button": "Stop button",
+          "paused_states": "States that mean a print is paused",
+          "stage": "Stage sensor",
+          "stage_states": "Stages that mean it's printing",
+          "layer": "Layer sensor"
+        },
+        "data_description": {
+          "camera": "A camera that shows the build plate.",
+          "print_status": "Frames are only checked while this entity is in one of the states below.",
+          "active_states": "For example running (Bambu Lab) or printing (Moonraker, PrusaLink, Creality, OctoPrint).",
+          "pause_button": "Used for auto-pause and the Pause notification action.",
+          "resume_button": "Used by the Resume and Continue notification actions.",
+          "stop_button": "Used by the Stop notification action.",
+          "paused_states": "While paused, checks stop but a detected failure and a snooze are kept. Any other state ends the print. For example pause (Bambu Lab) or paused (Moonraker, PrusaLink, Creality, OctoPrint).",
+          "stage": "Optional. A sensor showing what the printer is doing right now, such as ha-bambulab's Current stage. Checks then skip levelling, heating, purging and filament changes, which look odd on camera but aren't failures.",
+          "stage_states": "printing for ha-bambulab. If the stage sensor is unavailable, checks run anyway.",
+          "layer": "Optional. The current layer number, such as ha-bambulab's Current layer. With it, each check also compares the frame with one from some layers earlier, to catch a part that stopped growing: a clog, a filament runout, or printing into air."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure",
+        "description": "Change the provider, API key or printer entities. The frame history and options are kept.",
+        "data": {
+          "provider": "Provider",
+          "api_key": "API key",
+          "camera": "Camera",
+          "print_status": "Print status",
+          "active_states": "States that mean a print is running",
+          "pause_button": "Pause button",
+          "resume_button": "Resume button",
+          "stop_button": "Stop button",
+          "paused_states": "States that mean a print is paused",
+          "stage": "Stage sensor",
+          "stage_states": "Stages that mean it's printing",
+          "layer": "Layer sensor"
+        },
+        "data_description": {
+          "provider": "OpenRouter reaches about 30 decision models with one key. Google's free tier serves gemini-decision-1, but Google uses free-tier inputs, your camera frames, to improve its products. The OpenAI format also works with gateways such as Vercel AI Gateway via the base URL option.",
+          "api_key": "Leave empty to keep the current key.",
+          "camera": "A camera that shows the build plate.",
+          "print_status": "Frames are only checked while this entity is in one of the states below.",
+          "active_states": "For example running (Bambu Lab) or printing (Moonraker, PrusaLink, Creality, OctoPrint).",
+          "pause_button": "Used for auto-pause and the Pause notification action.",
+          "resume_button": "Used by the Resume and Continue notification actions.",
+          "stop_button": "Used by the Stop notification action.",
+          "paused_states": "While paused, checks stop but a detected failure and a snooze are kept. Any other state ends the print. For example pause (Bambu Lab) or paused (Moonraker, PrusaLink, Creality, OctoPrint).",
+          "stage": "Optional. A sensor showing what the printer is doing right now, such as ha-bambulab's Current stage. Checks then skip levelling, heating, purging and filament changes, which look odd on camera but aren't failures.",
+          "stage_states": "printing for ha-bambulab. If the stage sensor is unavailable, checks run anyway.",
+          "layer": "Optional. The current layer number, such as ha-bambulab's Current layer. With it, each check also compares the frame with one from some layers earlier, to catch a part that stopped growing: a clog, a filament runout, or printing into air."
+        }
+      },
+      "reauth_confirm": {
+        "title": "New API key",
+        "description": "The provider rejected the API key for {name}, so frames can't be checked. Enter a new key.",
+        "data": {
+          "api_key": "API key"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This camera is already monitored.",
+      "reconfigure_successful": "Saved. The printer was reloaded with the new settings.",
+      "reauth_successful": "Saved. Checks will use the new key."
+    },
+    "error": {
+      "camera_taken": "Another printer already uses this camera."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Print Failure Monitor options",
+        "sections": {
+          "alerts": {
+            "name": "Alerts",
+            "data": {
+              "auto_pause": "Pause the printer automatically",
+              "notify_services": "Notify",
+              "snooze_minutes": "Snooze after Continue",
+              "print_report": "Print report"
+            },
+            "data_description": {
+              "auto_pause": "Off: you get a notification with Pause, Stop and Continue. On: the printer is paused first and the notification offers Resume and Stop. Needs a pause button.",
+              "notify_services": "Notify services to send actionable notifications to, e.g. notify.mobile_app_your_phone. A persistent notification in Home Assistant is always created.",
+              "snooze_minutes": "After you tap Continue or Resume, checks pause for this long so the same failure doesn't alert again right away.",
+              "print_report": "When a watched print ends, send a summary of its checks with a strip of frames to the notify services above."
+            }
+          },
+          "detection": {
+            "name": "Detection",
+            "data": {
+              "interval": "Check every (early)",
+              "window": "Frames to remember",
+              "required": "Failed frames needed",
+              "yes_threshold": "Yes threshold",
+              "no_threshold": "No threshold",
+              "early_minutes": "Early phase",
+              "later_interval": "Then check every",
+              "compare_layers": "Compare frames this many layers apart",
+              "daily_limit": "Daily check limit"
+            },
+            "data_description": {
+              "window": "How many recent checked frames count toward a failure.",
+              "required": "How many of those must show a failure before alerting.",
+              "yes_threshold": "An answer above this counts as yes.",
+              "no_threshold": "An answer below this counts as no. Frames in between are skipped.",
+              "interval": "How often to check at the start of a print, when most failures begin.",
+              "early_minutes": "How long the start of a print lasts, counted from when it starts printing (after the start routine with a stage sensor). 0 uses the later interval throughout.",
+              "later_interval": "How often to check for the rest of the print.",
+              "compare_layers": "Needs a layer sensor (Reconfigure). Each check also sends a frame from this many layers earlier, to catch a part that stopped growing. Enough layers for visible growth: 20 is about 4 mm at 0.2 mm layers. 0 turns it off.",
+              "daily_limit": "Stops automatic checks for the rest of the day once this many model calls were made, with one notification. Check now still works. 0 means no limit."
+            }
+          },
+          "history": {
+            "name": "Frame history",
+            "data": {
+              "save_frames": "Save frames",
+              "retention_days": "Keep for",
+              "max_storage_mb": "Storage limit"
+            },
+            "data_description": {
+              "save_frames": "Saved frames appear in the Print failures panel. Every check's result is recorded either way, for the stats.",
+              "retention_days": "Older frames and results are deleted every hour.",
+              "max_storage_mb": "When saved frames exceed this, the oldest images are deleted first. Their results stay in the stats."
+            }
+          },
+          "advanced": {
+            "name": "Advanced",
+            "data": {
+              "model": "Model",
+              "base_url": "Base URL",
+              "camera_description": "Camera description",
+              "max_image_size": "Max image size",
+              "timeout": "Request timeout",
+              "questions": "Questions"
+            },
+            "data_description": {
+              "model": "Empty uses the provider's default.",
+              "base_url": "Empty uses the provider's API. Set it to send the provider's request format to a gateway or proxy.",
+              "camera_description": "Sent with every frame. Describing your exact camera can help or hurt depending on the model; compare on your own prints.",
+              "max_image_size": "Frames with a longer side are downscaled to this many pixels.",
+              "questions": "Override, disable or add questions. See Customizing questions at https://github.com/somus/ha-print-failure-monitor/blob/main/docs/tuning.md for the format. Check your own prints after any change."
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "required_gt_window": "Failed frames needed can't be more than frames to remember.",
+      "thresholds": "The no threshold must be below the yes threshold.",
+      "questions": "Questions: {error}"
+    }
+  },
+  "selector": {
+    "provider": {
+      "options": {
+        "openrouter": "OpenRouter",
+        "google": "Google (Gemini API)",
+        "openai": "OpenAI format (OpenAI, Vercel AI Gateway, other gateways)"
+      }
+    },
+    "save_frames": {
+      "options": {
+        "all": "All frames",
+        "not_clean": "Only frames that didn't look fine",
+        "off": "Don't save frames"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "failure": {
+        "name": "Print failure"
+      }
+    },
+    "sensor": {
+      "failure_probability": {
+        "name": "Failure probability"
+      },
+      "last_check": {
+        "name": "Last check",
+        "state": {
+          "idle": "Idle",
+          "snoozed": "Snoozed",
+          "failed": "Failure seen",
+          "clean": "Looks fine",
+          "unsure": "Unsure",
+          "not_visible": "Plate not visible",
+          "error": "Error",
+          "paused": "Print paused",
+          "preparing": "Getting ready",
+          "limit_reached": "Daily limit reached"
+        }
+      }
+    },
+    "image": {
+      "last_frame": {
+        "name": "Last checked frame"
+      }
+    },
+    "switch": {
+      "enabled": {
+        "name": "Monitoring"
+      },
+      "auto_pause": {
+        "name": "Auto-pause"
+      }
+    },
+    "button": {
+      "check_now": {
+        "name": "Check now"
+      }
+    }
+  },
+  "services": {
+    "check": {
+      "name": "Check now",
+      "description": "Checks a camera frame right away and returns the result and every question's probability. During a print, a check of the printer's own camera counts toward the failure window like a scheduled one.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Printer",
+          "description": "The monitored printer whose settings, model and API key are used."
+        },
+        "camera": {
+          "name": "Camera",
+          "description": "Check this camera instead of the printer's. The result is only returned: it doesn't change the printer's entities, window or history."
+        }
+      }
+    },
+    "snooze": {
+      "name": "Snooze",
+      "description": "Clears a detected failure and skips checks for a while, like the Continue button on a notification. Snoozing ends when the print does.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Printer",
+          "description": "The monitored printer whose settings, model and API key are used."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "How long to snooze. Defaults to the snooze option. 0 ends a snooze and checks right away."
+        }
+      }
+    }
+  },
+  "issues": {
+    "checks_failing": {
+      "title": "{printer} isn't being watched for failures",
+      "description": "The last {checks} checks of {printer} failed, so failures during this print can't be detected.\n\nLast error: {error}\n\nIf the error is about the camera, check that {camera} shows a picture: the printer may be offline, or for a Bambu Lab printer, LAN mode liveview may be off. Otherwise the model provider may be down or rejecting requests.\n\nThis goes away on its own once a check works again or the print ends."
+    }
+  }
+}

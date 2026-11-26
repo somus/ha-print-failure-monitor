@@ -1,0 +1,24 @@
+check:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: print_failure_monitor
+    camera:
+      selector:
+        entity:
+          domain: camera
+snooze:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: print_failure_monitor
+    minutes:
+      selector:
+        number:
+          min: 0
+          max: 1440
+          unit_of_measurement: min

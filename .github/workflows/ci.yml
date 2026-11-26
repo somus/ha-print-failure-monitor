@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conventional_commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Check pull request title and commit subjects
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -eu
+          pattern='^(feat|fix|docs|refactor|test|build|ci|chore|perf|style|revert)(\([[:alnum:]_.-]+\))?!?: .+'
+          printf '%s\n' "$PR_TITLE" | grep -Eq "$pattern" || {
+            echo "PR title is not Conventional Commits compliant: $PR_TITLE" >&2
+            exit 1
+          }
+          git log --format='%s' "$BASE_SHA..$HEAD_SHA" | while IFS= read -r subject; do
+            printf '%s\n' "$subject" | grep -Eq "$pattern" || {
+              echo "commit subject is not Conventional Commits compliant: $subject" >&2
+              exit 1
+            }
+          done
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+      - run: uvx ruff check .
+      - run: uvx ruff format --check .
+      - run: node --check custom_components/print_failure_monitor/frontend/panel.js
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: sudo apt-get update && sudo apt-get install -y libturbojpeg
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+      - run: uv venv -p 3.14 .venv
+      - run: uv pip install -p .venv/bin/python -r requirements_test.txt
+      - run: .venv/bin/python -m pytest
+
+  hassfest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: home-assistant/actions/hassfest@07f46fd2e19967768b5fd3000f91f857452b767c # 2026.11.0
+
+  hacs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: hacs/action@d556e736723344f83838d08488c983a15381059a # 22.5.0
+        with:
+          category: integration
+
+  check:
+    if: always()
+    needs: [conventional_commits, lint, test, hassfest, hacs]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require all CI jobs to pass
+        env:
+          RESULTS: ${{ needs.conventional_commits.result }} ${{ needs.lint.result }} ${{ needs.test.result }} ${{ needs.hassfest.result }} ${{ needs.hacs.result }}
+        run: |
+          set -eu
+          for result in $RESULTS; do
+            case "$result" in
+              success|skipped) ;;
+              *) echo "CI job result was $result" >&2; exit 1 ;;
+            esac
+          done

@@ -1,0 +1,6 @@
+{
+  "services": {
+    "check": { "service": "mdi:camera-iris" },
+    "snooze": { "service": "mdi:alarm-snooze" }
+  }
+}
