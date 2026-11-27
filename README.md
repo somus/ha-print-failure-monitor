@@ -23,10 +23,9 @@ label what it got wrong.
 
 Requires Home Assistant 2026.9 or later.
 
-1. In Home Assistant, open Marketplace (HACS on older versions), open the menu, choose Custom
-   repositories, and add `https://github.com/somus/ha-print-failure-monitor` with type
-   Integration.
-2. Install Print Failure Monitor and restart Home Assistant.
+1. In Home Assistant, open Marketplace (HACS on older versions) and search for Print Failure
+   Monitor.
+2. Install it and restart Home Assistant.
 3. Go to Settings > Devices & services > Add integration > Print Failure Monitor.
 
 ## Quick start
