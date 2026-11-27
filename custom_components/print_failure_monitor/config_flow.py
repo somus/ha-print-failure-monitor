@@ -138,6 +138,9 @@ def validate_options(options: dict) -> tuple[dict[str, str], dict[str, str]]:
     return {}, {}
 
 
+QUESTIONS_DOCS_URL = "https://github.com/somus/ha-print-failure-monitor/blob/main/docs/tuning.md#customizing-questions"
+
+
 class PrintFailureConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
@@ -219,7 +222,7 @@ class PrintFailureOptionsFlow(OptionsFlowWithReload):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         current = {**DEFAULT_OPTIONS, **self.config_entry.options}
         errors: dict[str, str] = {}
-        placeholders = {"error": ""}
+        placeholders = {"error": "", "questions_docs": QUESTIONS_DOCS_URL}
 
         if user_input is not None:
             flat = {k: v for group in user_input.values() for k, v in group.items()}

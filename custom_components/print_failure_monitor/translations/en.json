@@ -166,7 +166,7 @@
               "base_url": "Empty uses the provider's API. Set it to send the provider's request format to a gateway or proxy.",
               "camera_description": "Sent with every frame. Describing your exact camera can help or hurt depending on the model; compare on your own prints.",
               "max_image_size": "Frames with a longer side are downscaled to this many pixels.",
-              "questions": "Override, disable or add questions. See Customizing questions at https://github.com/somus/ha-print-failure-monitor/blob/main/docs/tuning.md for the format. Check your own prints after any change."
+              "questions": "Override, disable or add questions. See [Customizing questions]({questions_docs}) for the format. Check your own prints after any change."
             }
           }
         }
