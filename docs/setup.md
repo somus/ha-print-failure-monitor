@@ -18,6 +18,8 @@ Assistant shows a repair asking for a new one.
 
 ## Plate area
 
+![The Plate area dialog with a box drawn over the build plate and the space up to the nozzle](images/plate_area.jpg)
+
 Most printer cameras see a lot besides the plate. In the Print failures panel, Plate area shows the
 live picture and lets you drag a box over the plate. Checks then send only that part, so the plate
 fills more of what the model sees. Only administrators see this button.

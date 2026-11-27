@@ -12,6 +12,13 @@ Any printer with a camera entity and a print status entity in Home Assistant wor
 [printer guide](https://github.com/somus/ha-print-failure-monitor/blob/main/docs/printers.md) lists the entities for Bambu Lab, Klipper (Moonraker),
 OctoPrint, PrusaLink, Creality and Elegoo.
 
+![A checked frame showing spaghetti around the nozzle, with each question's probability: plate visible 92%, spaghetti 94%, detached 87%, nozzle blob 27%](https://raw.githubusercontent.com/somus/ha-print-failure-monitor/main/docs/images/frame.jpg)
+
+The Print failures panel shows every check with its frame, so you can see what the model saw and
+label what it got wrong.
+
+![The Print failures panel with stats, a failure probability chart, frames per day and a gallery of checked frames](https://raw.githubusercontent.com/somus/ha-print-failure-monitor/main/docs/images/overview.jpg)
+
 ## Install
 
 Requires Home Assistant 2026.9 or later.
