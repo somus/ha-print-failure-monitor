@@ -18,6 +18,8 @@ All of them work in your own [automations](automations.md).
 
 ## Print failures panel
 
+![The Print failures panel with stats, a failure probability chart, frames per day and a gallery of checked frames](images/overview.jpg)
+
 The integration adds a Print failures page to the sidebar. For each printer, it shows stats for
 the chosen range (24 hours, 7 days or 30 days): checks and prints, failures seen and skipped
 frames, alerts and how many you dismissed as false alarms with Continue or Resume, the cost the
